@@ -3,8 +3,9 @@ from django.http import HttpResponse
 from django.contrib import messages
 import csv
 from .models import *
-from .forms import StockCreateForm, StockSearchForm, StockUpdateForm, IssueForm, ReceiveForm
+from .forms import StockCreateForm, StockSearchForm, StockUpdateForm, IssueForm, RouteForm
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import FormView
 
 
 # Create your views here.
@@ -108,28 +109,10 @@ def issue_items(request, pk):
 	return render(request, "add_items.html", context)
 
 
-@login_required
-def receive_items(request, pk):
-	queryset = Stock.objects.get(id=pk)
-	form = ReceiveForm(request.POST or None, instance=queryset)
-	if form.is_valid():
-		instance = form.save(commit=False)
-		instance.receive_quantity = 0
-		instance.quantity += instance.receive_quantity
-		instance.save()
-		print(str(instance.quantity))
-		messages.success(request, "Received SUCCESSFULLY. " + str(instance.quantity) + " " + str(instance.item_name)+"s now in Store")
-
-		return redirect('/stock_detail/'+str(instance.id))
-		# return HttpResponseRedirect(instance.get_absolute_url())
-	context = {
-			"title": 'Receive ' + str(queryset.item_name),
-			"instance": queryset,
-			"form": form,
-			"username": 'Receive By: ' + str(request.user),
-		}
-	return render(request, "add_items.html", context)
-
+class RouteFormView(FormView):
+    template_name = 'add_items.html'
+    form_class = RouteForm
+    success_url = '/thanks/'
 
 @login_required
 def list_history(request):

@@ -1,36 +1,29 @@
 from django import forms
-from .models import Stock
+from .models import Route, Stock
 
 class StockCreateForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ['category', 'item_name', 'quantity', 'price']
-
-    def clean_category(self):
-        category = self.cleaned_data.get('category')
-        if not category:
-            raise forms.ValidationError('Please enter category of item')
-        
-        for instance in Stock.objects.all():
-            if instance.category == category:
-                raise forms.ValidationError(category + ' is already created')
-        return category
+        fields = ['item_name', 'quantity', 'price']
 
     def clean_item_name(self):
         item_name = self.cleaned_data.get('item_name')
         if not item_name:
             raise forms.ValidationError('Please enter item name')
+        for instance in Stock.objects.all():
+            if instance.item_name == item_name:
+                raise forms.ValidationError(item_name + ' is already created')
         return item_name    
 
 class StockSearchForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ['category', 'item_name']
+        fields = ['item_name']
 
 class StockUpdateForm(forms.ModelForm):
     class Meta:
         model = Stock
-        fields = ['category', 'item_name', 'quantity', 'price']
+        fields = ['item_name', 'quantity', 'price']
 
 class IssueForm(forms.ModelForm):
 	class Meta:
@@ -38,7 +31,7 @@ class IssueForm(forms.ModelForm):
 		fields = ['issue_quantity', 'issue_to']
 
 
-class ReceiveForm(forms.ModelForm):
+class RouteForm(forms.ModelForm):
 	class Meta:
-		model = Stock
-		fields = ['receive_quantity', 'receive_by']  
+		model = Route
+		fields = ['vehicle_number', 'lap_number','mls_200', 'mls_300', 'mls_500', 'mls_1000', 'Refreshers_350','Dasani_500mls', 'Dasani_1l', 'predator_500mls', 'power_play', 'pet_280', 'pet_350mls', 'pet_500mls', 'pet_1250mls', 'pet_2000mls', 'pet_M_Maid']  
