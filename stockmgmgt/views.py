@@ -6,6 +6,7 @@ from .models import *
 from .forms import StockCreateForm, StockSearchForm, StockUpdateForm, IssueForm, RouteForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import FormView
+from .models import Transaction
 
 
 # Create your views here.
@@ -37,7 +38,8 @@ def list_items(request):
 	    "form": form,
 	    "header": header,
 	    "queryset": queryset,
-}
+		}
+
     return render(request, "list_items.html", context)
 
 @login_required
@@ -86,34 +88,67 @@ def stock_detail(request, pk):
 
 
 @login_required
-def issue_items(request, pk):
-	queryset = Stock.objects.get(id=pk)
-	form = IssueForm(request.POST or None, instance=queryset)
-	if form.is_valid():
-		instance = form.save(commit=False)
-		instance.receive_quantity = 0
-		instance.quantity -= instance.issue_quantity
-		#instance.issue_by = str(request.user)
-		messages.success(request, "Issued SUCCESSFULLY. " + str(instance.quantity) + " " + str(instance.item_name) + "s now left in Store")
-		instance.save()
+def issue_items(request):
+    data = request.GET.dict()
+    Product_id = list(data.keys())
+    pk_list = clean_keys_data(Product_id)
+    for keys, values in data.items():
+        quantity_list = [values for values in data.values()]
+    clean_list = []
+    unwanted_list = []
+    
+    total_transacted = quantity_list.pop()
+    
 
-		return redirect('/stock_detail/'+str(instance.id))
-		# return HttpResponseRedirect(instance.get_absolute_url())
+    for pk in pk_list:
+        queryset = Stock.objects.get(item_name=pk)
+        instance = queryset    
+        instance.issue_quantity = quantity_list[pk_list.index(pk)]
+        instance.quantity -= int(instance.issue_quantity)
+        instance.issue_by = str(request.user)
+        messages.success(
+            request,
+            "Issued SUCCESSFULLY. "
+            + str(instance.quantity)
+            + " "
+            + str(instance.item_name)
+            + "s now left in Store",
+        )
+        instance.save()
+    
+    sell_transaction = Transaction(
+        employee_name= request.user.username,
+        transaction_amount= total_transacted,
+        timestamp= date.today(),
+        product_ids= ','.join(pk_list),
+        items_count= ','.join(quantity_list)
+    )
+    sell_transaction.save()
+    
+    return redirect("/list_items/")
+    context = {
+        "title": "Issue " + str(queryset.item_name),
+        "queryset": queryset,
+        "form": form,
+        "username": "Issue By: " + str(request.user),
+    }
+    return render(request, "add_items.html", context)
 
-	context = {
-		"title": 'Issue ' + str(queryset.item_name),
-		"queryset": queryset,
-		"form": form,
-		"username": 'Issue By: ' + str(request.user),
-	}
-	return render(request, "add_items.html", context)
 
 
 class RouteFormView(FormView):
     template_name = 'add_items.html'
     form_class = RouteForm
-    success_url = '/thanks/'
-
+	
+    def post(self, request):
+	    form = self.form_class(request.POST)
+	    if form.is_valid():
+		    form.save()
+		    context = {"Message":"Route form saved"}
+		    return render(request,"route.html", context)
+		    form = self.form_class()
+	    return render(request, "route.html", form)
+	
 @login_required
 def list_history(request):
 	header = 'LIST OF ITEMS'
@@ -126,4 +161,90 @@ def list_history(request):
 
 @login_required
 def report(request):
-	return render(request, "report-1.html")
+    data = Transaction.objects.values("product_ids")
+    product_id_list = [items["product_ids"] for items in data]
+    product_id_list = [items.split(",") for items in product_id_list]
+    #  get names of all products transacted 
+    name = get_product_name(product_id_list)
+    # get count of all products transacted 
+    count_data = Transaction.objects.values("items_count")
+    item_count = [items["items_count"] for items in count_data]
+    item_count = [items.split(", ") for items in item_count]
+    count = get_product_count(item_count)
+    # data =Transaction.objects.values('item_name').annotate(Sum('transaction_amount'))
+    # categories = [items["item_name"] for items in data]
+    # user_count = User.objects.all().count()
+    # prices = [items["transaction_amount__sum"] for items in data]
+    # total_sales = sum(prices)
+    # print(data, categories, prices)
+    # {'categories':json.dumps(categories), 'prices':json.dumps(prices), 'user_count':json.dumps(user_count),'total_sales':json.dumps(total_sales) }
+    return render(request, "report-1.html")
+
+@login_required
+def add_to_cart(request):
+    # form = IssueForm()
+    employee_name = request.user.username
+    data = request.GET.dicts()
+    
+    # Product = Stock.objects.filter(pk=pk)
+    # price = Product.get().price
+    # product_name = Product.get().item_name
+    # order_item = Order.objects.get_or_create(id=Stock.objects.get(id=pk),employee_name=employee_name, product_name=product_name, price=price, is_complete=False)
+    # order_query = Order.objects.filter(employee_name=employee_name, is_complete=0)
+    # order_list = [items for items in order_query.values()]
+    # queryset = Stock.objects.all()
+    # pk_list = [items["id_id"] for items in order_list]
+    # context = {
+    #     "form": form,
+    # }
+    # messages.info(request, f"item added to cart ")
+    return render(request, "list_items.html", { 'order_list':order_list, 'queryset':queryset, 'pk_list':pk_list, "form":form })
+
+@login_required
+def delete_from_cart(request, id):
+    Product = Order.objects.filter(id_id=id)
+    Product.delete()
+    employee_name = request.user.username
+    # import ipdb; ipdb.set_trace()
+    order_item = Order.objects.all()
+    order_query = Order.objects.filter(employee_name=employee_name, is_complete=0)
+    order_list = [items for items in order_query.values()]
+    queryset = Stock.objects.all()
+    pk_list = [items["id_id"] for items in order_list]
+
+
+    
+    messages.info(request, f"item added to cart ")
+    return render(request, "list_items.html", { 'order_list':order_list, 'queryset':queryset, 'pk_list':pk_list })
+
+def clean_keys_data(list):
+    new_list = []
+    "removing 'a[' from items in the keys list "
+
+    for items in list:
+        data = items.replace("a[", "")
+        new_list.append(data)
+    
+    clean_list = []
+    "removing ']' from items in new list "
+    for items in new_list:
+        data = items.replace("]", "")
+        clean_list.append(data)
+    clean_list.pop()
+    return clean_list 
+
+def get_product_name(products_list):
+    # generate product names from a list of product ids
+    name = []
+    for items in products_list:
+        for id in items:
+            name.append(Stock.objects.filter(id=int(id)))
+    
+    return name
+def get_product_count(products_list):
+    # generate product count list
+    counts = []
+    for items in products_list:
+        for count in items:
+            counts.append(count)
+    return count

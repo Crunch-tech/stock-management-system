@@ -92,7 +92,7 @@
         <div class="col-sm-5">
           <div class="display-table"
             style="border-bottom-right-radius: 20px;padding-left: 5px; padding-right: 5px; padding-bottom: 20px; box-shadow: 12px 12px 15px #2e6da4;">
-            <form method="post" action="/add_items/">{% csrf_token %}
+            <form method="post" action="/route/">{% csrf_token %}
               {{form|crispy}}
               <input type="submit" class="btn btn-primary mybutton" value="Save">
             </form>
