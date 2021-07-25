@@ -36,6 +36,10 @@ class StockHistory(models.Model):
 	timestamp = models.DateTimeField(auto_now_add=False, auto_now=False, null=True) 
 
 class Route(models.Model):
+    
+    class META:
+        app_label = "route"
+
     VEHICLE_CHOICES = (("1", "1"), ("2","2"))
     vehicle_number = models.CharField(max_length=1, choices=VEHICLE_CHOICES)
     lap_number = models.IntegerField(default='0', blank=False, null=False)
@@ -54,3 +58,20 @@ class Route(models.Model):
     pet_1250mls = models.IntegerField(default="0",blank=False, null=False)
     pet_2000mls = models.IntegerField(default="0",blank=False, null=False)
     pet_M_Maid = models.IntegerField(default="0",blank=False, null=False)
+
+class Transaction(models.Model):
+    employee_name = models.CharField(max_length=50, blank=False)
+    transaction_amount = models.IntegerField(default='0', blank=False)
+    timestamp = models.DateTimeField(auto_now_add=False, auto_now=False, null=True)        
+    product_ids = models.CharField(max_length=256)
+    items_count = models.CharField(max_length=256)
+
+class Order(models.Model):
+    id= models.OneToOneField('stock', on_delete=models.PROTECT, primary_key=True, unique=True)
+    employee_name = models.CharField(max_length=50)
+    product_name = models.CharField(max_length=50)
+    price = models.IntegerField(default=0)
+    is_complete = models.BooleanField(default=False)
+
+class OrderQuantity(models.Model):
+    quantity = models.IntegerField(default='0', blank=True, null=True)
