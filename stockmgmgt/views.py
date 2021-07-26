@@ -31,15 +31,15 @@ def list_items(request):
         "form": form,
     }
     if request.method == 'POST':
-	    queryset = Stock.objects.filter(category__icontains=form['category'].value(),
-								   item_name__icontains=form['item_name'].value()
-									)
+        queryset = Stock.objects.filter(category__icontains=form['category'].value(),
+                                   item_name__icontains=form['item_name'].value()
+                                    )
                                     
-	    context = {
-	    "form": form,
-	    "header": header,
-	    "queryset": queryset,
-		}
+        context = {
+        "form": form,
+        "header": header,
+        "queryset": queryset,
+        }
 
     return render(request, "list_items.html", context)
 
@@ -58,18 +58,18 @@ def add_items(request):
 
 @login_required
 def update_items(request, pk):
-	queryset = Stock.objects.get(id=pk)
-	form = StockUpdateForm(instance=queryset)
-	if request.method == 'POST':
-		form = StockUpdateForm(request.POST, instance=queryset)
-		if form.is_valid():
-			form.save(), messages.success(request, 'Successfully Updated')
-			return redirect('/list_items')
+    queryset = Stock.objects.get(id=pk)
+    form = StockUpdateForm(instance=queryset)
+    if request.method == 'POST':
+        form = StockUpdateForm(request.POST, instance=queryset)
+        if form.is_valid():
+            form.save(), messages.success(request, 'Successfully Updated')
+            return redirect('/list_items')
 
-	context = {
-		'form':form
-	}
-	return render(request, 'add_items.html', context)
+    context = {
+        'form':form
+    }
+    return render(request, 'add_items.html', context)
     
 @login_required	
 def delete_items(request, pk):
@@ -81,11 +81,11 @@ def delete_items(request, pk):
     return render(request, 'delete_items.html')        
 
 def stock_detail(request, pk):
-	queryset = Stock.objects.get(id=pk)
-	context = {
-		"queryset": queryset,
-	}
-	return render(request, "stock_detail.html", context)
+    queryset = Stock.objects.get(id=pk)
+    context = {
+        "queryset": queryset,
+    }
+    return render(request, "stock_detail.html", context)
 
 
 @login_required
@@ -99,8 +99,7 @@ def issue_items(request):
     unwanted_list = []
     
     total_transacted = quantity_list.pop()
-    
-
+    import ipdb;ipdb.set_trace()
     for pk in pk_list:
         queryset = Stock.objects.get(item_name=pk)
         instance = queryset    
@@ -138,27 +137,35 @@ def issue_items(request):
 
 
 class RouteFormView(FormView):
-    template_name = 'add_items.html'
+    template_name = 'route.html'
     form_class = RouteForm
-	
+    
     def post(self, request):
-	    form = self.form_class(request.POST)
-	    if form.is_valid():
-		    form.save()
-		    context = {"Message":"Route form saved"}
-		    return render(request,"route.html", context)
-		    form = self.form_class()
-	    return render(request, "route.html", form)
-	
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            pk_list = []
+            unwanted_data = ["vehicle_number", "lap_number"]
+            for items in unwanted_data:
+                del form.cleaned_data[items]
+                
+            for key, value in form.cleaned_data.items():
+                import ipdb;ipdb.set_trace()
+            context = {"Message":"Route form saved"}
+            return render(request,"route.html", context)
+        form = self.form_class()
+        context = { "form": form }
+        return render(request, "route.html", context)
+    
 @login_required
 def list_history(request):
-	header = 'LIST OF ITEMS'
-	queryset = StockHistory.objects.all()
-	context = {
-		"header": header,
-		"queryset": queryset,
-	}
-	return render(request, "list_history.html",context)
+    header = 'LIST OF ITEMS'
+    queryset = StockHistory.objects.all()
+    context = {
+        "header": header,
+        "queryset": queryset,
+    }
+    return render(request, "list_history.html",context)
 
 @login_required
 def report(request):
