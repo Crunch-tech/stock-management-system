@@ -1,3 +1,4 @@
+from django.contrib.messages.api import error
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
@@ -99,31 +100,8 @@ def issue_items(request):
     unwanted_list = []
     
     total_transacted = quantity_list.pop()
-    import ipdb;ipdb.set_trace()
-    for pk in pk_list:
-        queryset = Stock.objects.get(item_name=pk)
-        instance = queryset    
-        instance.issue_quantity = quantity_list[pk_list.index(pk)]
-        instance.quantity -= int(instance.issue_quantity)
-        instance.issue_by = str(request.user)
-        messages.success(
-            request,
-            "Issued SUCCESSFULLY. "
-            + str(instance.quantity)
-            + " "
-            + str(instance.item_name)
-            + "s now left in Store",
-        )
-        instance.save()
     
-    sell_transaction = Transaction(
-        employee_name= request.user.username,
-        transaction_amount= total_transacted,
-        timestamp= date.today(),
-        product_ids= ','.join(pk_list),
-        items_count= ','.join(quantity_list)
-    )
-    sell_transaction.save()
+    update_stock_on_issue(pk_list,quantity_list, request,total_transacted)
     
     return redirect("/list_items/")
     context = {
@@ -148,9 +126,12 @@ class RouteFormView(FormView):
             unwanted_data = ["vehicle_number", "lap_number"]
             for items in unwanted_data:
                 del form.cleaned_data[items]
-                
+            pk_list = []
+            quantity_list = []
             for key, value in form.cleaned_data.items():
-                import ipdb;ipdb.set_trace()
+                pk_list.append(key)
+                quantity_list.append(value)
+            update_stock_on_issue(pk_list, quantity_list, request, 0)
             context = {"Message":"Route form saved"}
             return render(request,"route.html", context)
         form = self.form_class()
@@ -221,7 +202,30 @@ def delete_from_cart(request, id):
     pk_list = [items["id_id"] for items in order_list]
 
 
+    for pk in pk_list:
+        queryset = Stock.objects.get(item_name=pk)
+        instance = queryset    
+        instance.issue_quantity = quantity_list[pk_list.index(pk)]
+        instance.quantity -= int(instance.issue_quantity)
+        instance.issue_by = str(request.user)
+        messages.success(
+            request,
+            "Issued SUCCESSFULLY. "
+            + str(instance.quantity)
+            + " "
+            + str(instance.item_name)
+            + "s now left in Store",
+        )
+        instance.save()
     
+    sell_transaction = Transaction(
+        employee_name= request.user.username,
+        transaction_amount= total_transacted,
+        timestamp= date.today(),
+        product_ids= ','.join(pk_list),
+        items_count= ','.join(quantity_list)
+    )
+    sell_transaction.save()
     messages.info(request, f"item added to cart ")
     return render(request, "list_items.html", { 'order_list':order_list, 'queryset':queryset, 'pk_list':pk_list })
 
@@ -256,3 +260,36 @@ def get_product_count(products_list):
         for count in items:
             counts.append(count)
     return count
+
+def update_stock_on_issue(pk_list, quantity_list, request, total_transacted):
+    for (index, pk) in enumerate(pk_list):
+        if quantity_list[index] == 0:
+            print("item not updated")
+        else:
+            import ipdb;ipdb.set_trace()
+            queryset = Stock.objects.get(item_name=pk.replace("_", " "))
+            instance = queryset    
+            instance.issue_quantity = quantity_list[pk_list.index(pk)]
+            instance.quantity -= int(instance.issue_quantity)
+            instance.issue_by = str(request.user)
+            messages.success(
+                request,
+                "Issued SUCCESSFULLY. "
+                + str(instance.quantity)
+                + " "
+                + str(instance.item_name)
+                + "s now left in Store",
+            )
+            print("item updated")
+            instance.save()
+    if total_transacted == 0:
+        pass
+    else:
+        sell_transaction = Transaction(
+            employee_name= request.user.username,
+            transaction_amount= total_transacted,
+            timestamp= date.today(),
+            product_ids= ','.join(pk_list),
+            items_count= ','.join(quantity_list)
+        )
+        return sell_transaction.save()
