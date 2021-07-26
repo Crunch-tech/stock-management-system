@@ -259,7 +259,7 @@
           <strong><i><b>Items Search</b></i></strong>
         </h1>
         <hr>
-        <form class="mt-3" method="POST" action="">{% csrf_token %}
+        <form class="mt-3" method="POST" action="{% url 'route'%}">{% csrf_token %}
           {{form|crispy}}
           <input class=" btn btn-primary mybutton" type="submit" value="Search">
         </form>
@@ -286,7 +286,7 @@
             <p class="item-count font-weight-bold float-right">Quantity : <a href="{% url 'stock_detail' instance.item_name %}" class="text-uppercase text-muted ">{{instance.quantity}}</a></p>
             <p class="font-weight-bold float-right">Price: Ksh.{{instance.price}}/=</p>
               {{ instance.item_name }}
-              <button class="btn btn-primary add-to-cart" data-id= {{instance.item_name}} data-price={{instance.price}} data-name={{instance.item_name}}><small><b>Add to cart </b></small></button>
+            <button class="btn btn-primary add-to-cart" data-id= '{{instance.item_name}}' data-price={{instance.price}} data-name= '{{instance.item_name}}' ><small><b>Add to cart </b></small></button>
             
             <button class="btn btn-warning mt-1 mb-0" ><a href="{% url 'delete_items' instance.item_name %}" style="color: red;"><img
               src="https://img.icons8.com/color/28/000000/delete-sign.png" />Delete item</a></button>
@@ -318,6 +318,7 @@
 
       function displayCart() {
           var cartArray = shoppingCart.listCart();
+          console.log(cartArray)
           var output = "";
           for (var i in cartArray) {
             output += "<div>"

@@ -34,4 +34,4 @@ class IssueForm(forms.ModelForm):
 class RouteForm(forms.ModelForm):
 	class Meta:
 		model = Route
-		fields = ['vehicle_number', 'lap_number','mls_200', 'mls_300', 'mls_500', 'mls_1000', 'Refreshers_350','Dasani_500mls', 'Dasani_1l', 'predator_500mls', 'power_play', 'pet_280', 'pet_350mls', 'pet_500mls', 'pet_1250mls', 'pet_2000mls', 'pet_M_Maid']  
+		fields = ['vehicle_number', 'lap_number', 'soda_200mls',  'soda_300mls',  'soda_500mls',  'soda_1000mls', 'Refreshers_350','Dasani_500mls', 'Dasani_1l', 'predator_500mls', 'power_play', 'pet_280', 'pet_350mls', 'pet_500mls', 'pet_1250mls', 'pet_2000mls', 'pet_M_Maid']  
