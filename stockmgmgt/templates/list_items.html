@@ -39,9 +39,7 @@
       /* background-color: #3F729B; */
     }
     .rgba-gradient {
-      background: -moz-linear-gradient(45deg,#212121, white 100%);
-      background: -webkit-linear-gradient(45deg,#212121, white 100%);
-      background: linear-gradient(to 45deg,#212121, white 100%);
+      
     }
     .jumbotron{
       /* background-color:black; */
@@ -229,7 +227,7 @@
         {% endfor %}
     </ul>
     {% endif %} -->
-    <div class="col-md-3 ml-5 mt-5 card " style="background-color:; border-radius: 50px; position: relative; ">
+    <div class="col-md-3 ml-5 mt-5 card " style="background-color:grey; border-radius: 20px; position: relative; ">
       <div class="cart">
 
         <div class="mt-2" style="text-align: center; position: relative;">
@@ -274,23 +272,38 @@
 <div class="col-md-8" style="text-align: center;">
       <div class="col-md-12 mt-5">
         <h1 class="font-weight-bold"><i><strong><b>Items List</b></strong></i></h1>
-        <hr style="display: block; width: 100%;">
+        <hr style=" width: 100%;">
 
       </div>
-      <div class="col-md-12 ml-5 row">
-        <!-- <div class="row"> -->
+
+      <div class="col-md-12 ml-0 ">
+
+        <div class="col-md-12 mt-5">
+          <ul class="row" style="list-style-type:none;">
+          <li class="col-md-4" style="margin-right: 0px; font-weight: bold;">Item Name</li>
+          <li class="col-md-4" style="margin-right: 0px; font-weight: bold;">Quantity</li>
+          <li class="col-md-4" style="margin-right: 0px; font-weight: bold;">Price</li>
+        </ul>
+      </div>
           {% for instance in queryset%}
-          <div class="card gradient-card col-md-3 m-3" style="text-align: justify; border-bottom-right-radius: 20px; padding-left: 5px; padding-right: 5px; padding-bottom: 20px; box-shadow: 12px 12px 20px 6px #2e6da4; background-image: url({% static 'img/items.jpeg' %});">
-            <h4 class="font-weight-bold float-right">{{instance.category}}</h4>
-            <p class="font-weight-bold float-right">Item Name : <a href="{% url 'update_items' instance.item_name %}" class=" text-uppercase text-muted">{{instance.item_name}}</a></p>
-            <p class="item-count font-weight-bold float-right">Quantity : <a href="{% url 'stock_detail' instance.item_name %}" class="text-uppercase text-muted ">{{instance.quantity}}</a></p>
-            <p class="font-weight-bold float-right">Price: Ksh.{{instance.price}}/=</p>
-              {{ instance.item_name }}
-            <button class="btn btn-primary add-to-cart" data-id= '{{instance.item_name}}' data-price={{instance.price}} data-name= '{{instance.item_name}}' ><small><b>Add to cart </b></small></button>
-            
-            <button class="btn btn-warning mt-1 mb-0" ><a href="{% url 'delete_items' instance.item_name %}" style="color: red;"><img
-              src="https://img.icons8.com/color/28/000000/delete-sign.png" />Delete item</a></button>
-          </p>
+          <div class="row">
+            <div class="col-md-12">
+            <div class="col-md-12 ml-5" style="margin-left: 50px;">
+              <ul  class=" col-md-12 row " style="list-style-type: none;">        
+                <li class="col-md-4" style="margin-right: 0px;"><a href="{% url 'update_items' instance.item_name %}" class=" text-uppercase">{{instance.item_name}}</a></li>
+                <li class="col-md-4" style="margin-right: 0px;"><a href="{% url 'stock_detail' instance.item_name %}" class="text-uppercase">{{instance.quantity}}</a></li>
+                <li class="col-md-4" style="margin-right: 0px;" >Ksh.{{instance.price}}/= </li>
+              </ul>
+            </div>
+          </div>
+
+            <div class="col-md-12 " style="position: relative; top:5px; right: 0px; margin-left: 40%;">
+              
+              <button class="btn btn-sm btn-primary add-to-cart" data-id= '{{instance.item_name}}' data-price={{instance.price}} data-name= '{{instance.item_name}}' ><small><b>Add to cart </b></small></button>
+              <button class="btn btn-danger mt-1 mb-0" ><a href="{% url 'delete_items' instance.item_name %}" style="color: white;"><small><b>Delete</b></small></a></button>
+            </div>
+          </div>
+          <hr>
           </div>
           
           {% endfor %}
