@@ -266,7 +266,6 @@ def update_stock_on_issue(pk_list, quantity_list, request, total_transacted):
         if quantity_list[index] == 0:
             print("item not updated")
         else:
-            import ipdb;ipdb.set_trace()
             queryset = Stock.objects.get(item_name=pk.replace("_", " "))
             instance = queryset    
             instance.issue_quantity = quantity_list[pk_list.index(pk)]
