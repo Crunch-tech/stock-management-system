@@ -12,7 +12,32 @@
   <title>Home</title>
 
   <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/navbar-fixed/">
-
+  <!-- Bootstap css -->
+          <!-- Font Awesome -->
+          <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+          <!-- Google Fonts -->
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+          <!-- Bootstrap core CSS -->
+          <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+          <!-- Material Design Bootstrap -->
+          <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
+          <!-- Bootstrap Min CSS -->
+          <link rel="stylesheet" href="{% static 'css/bootstrap.mins.css' %}">
+          <!-- Animate Min CSS -->
+          <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
+          <!--  -->
+          <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+          <!--  -->
+          <link rel="stylesheet" href="{% static 'css/flaticon.html' %}">
+          <!-- IcoFont Min CSS -->
+          <link rel="stylesheet" href="{% static 'css/icofont.min.css' %}">
+          <!-- Owl Carousel Min CSS -->
+          <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
+          <!-- default CSS -->
+          <link rel="stylesheet" href="{% static 'css/default.css' %}">
+          <!-- Style CSS -->
+          <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+          <!-- Favicon -->
   <!-- Bootstrap core CSS -->
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
@@ -227,7 +252,7 @@
         {% endfor %}
     </ul>
     {% endif %} -->
-    <div class="col-md-3 ml-5 mt-5 card " style="background-color:grey; border-radius: 20px; position: relative; ">
+    <div class="col-md-3 ml-5 mt-5 card " style="background-color:rgb(0, 0, 0, 0.2); border-radius: 20px; position: relative; ">
       <div class="cart">
 
         <div class="mt-2" style="text-align: center; position: relative;">
@@ -273,42 +298,35 @@
       <div class="col-md-12 mt-5">
         <h1 class="font-weight-bold"><i><strong><b>Items List</b></strong></i></h1>
         <hr style=" width: 100%;">
-
       </div>
-
-      <div class="col-md-12 ml-0 ">
-
-        <div class="col-md-12 mt-5">
-          <ul class="row" style="list-style-type:none;">
-          <li class="col-md-4" style="margin-right: 0px; font-weight: bold;">Item Name</li>
-          <li class="col-md-4" style="margin-right: 0px; font-weight: bold;">Quantity</li>
-          <li class="col-md-4" style="margin-right: 0px; font-weight: bold;">Price</li>
-        </ul>
-      </div>
+      <table class="table ml-5">
+        <thead>
+          <tr>
+            
+            <th scope="col">Item Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Add to Cart</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
           {% for instance in queryset%}
-          <div class="row">
-            <div class="col-md-12">
-            <div class="col-md-12 ml-5" style="margin-left: 50px;">
-              <ul  class=" col-md-12 row " style="list-style-type: none;">        
-                <li class="col-md-4" style="margin-right: 0px;"><a href="{% url 'update_items' instance.item_name %}" class=" text-uppercase">{{instance.item_name}}</a></li>
-                <li class="col-md-4" style="margin-right: 0px;"><a href="{% url 'stock_detail' instance.item_name %}" class="text-uppercase">{{instance.quantity}}</a></li>
-                <li class="col-md-4" style="margin-right: 0px;" >Ksh.{{instance.price}}/= </li>
-              </ul>
-            </div>
-          </div>
-
-            <div class="col-md-12 " style="position: relative; top:5px; right: 0px; margin-left: 40%;">
-              
+          <tr>
+            <td><strong style="font-size: 25px;">{{ instance.item_name }} </strong></td>
+            <td>{{ instance.quantity }}</td>
+            <td>{{ instance.price }}</td>
+            <td>
               <button class="btn btn-sm btn-primary add-to-cart" data-id= '{{instance.item_name}}' data-price={{instance.price}} data-name= '{{instance.item_name}}' ><small><b>Add to cart </b></small></button>
-              <button class="btn btn-danger mt-1 mb-0" ><a href="{% url 'delete_items' instance.item_name %}" style="color: white;"><small><b>Delete</b></small></a></button>
-            </div>
-          </div>
-          <hr>
-          </div>
-          
+            </td>
+            <td>
+            <button class="btn btn-danger mt-1 mb-0" ><a href="{% url 'delete_items' instance.item_name %}" style="color: white;"><small><b>Delete</b></small></a></button>
+            </td>
+          </tr>
           {% endfor %}
-        </div>
-      </div>
+        </tbody>
+      </table>
+      
     </div>
   </main>
   <script src="../static/js/js/shoppingCart.js"></script>
