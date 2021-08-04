@@ -14,7 +14,7 @@ from datetime import date
 # Create your views here.
 def home(request):
     title = 'welcome to our homepage'
-    form = "welcome"
+    form = StockCreateForm(request.POST or None)
     context = {
         "title": title,
         "form": form,
@@ -47,6 +47,7 @@ def list_items(request):
 @login_required
 def add_items(request):
     form = StockCreateForm(request.POST or None)
+    stock = Stock.objects.all().values()
     if form.is_valid():
         form.save()
         messages.success(request, 'Successfully Saved')
@@ -54,12 +55,13 @@ def add_items(request):
     context = {
         "form": form,
         "title": "Add Item",
+        "stock": stock
     }
     return render(request, "add_items.html", context)    
 
 @login_required
 def update_items(request, pk):
-    queryset = Stock.objects.get(id=pk)
+    queryset = Stock.objects.get(item_name=pk)
     form = StockUpdateForm(instance=queryset)
     if request.method == 'POST':
         form = StockUpdateForm(request.POST, instance=queryset)
