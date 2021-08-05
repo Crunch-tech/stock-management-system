@@ -62,6 +62,13 @@ def add_items(request):
 @login_required
 def update_items(request, pk):
     queryset = Stock.objects.get(item_name=pk)
+    stock = {
+        "item_name": queryset.item_name,
+        "price": queryset.price,
+        "quantity": queryset.quantity
+    }
+    stock_list = []
+    stock_list.append(stock)
     form = StockUpdateForm(instance=queryset)
     if request.method == 'POST':
         form = StockUpdateForm(request.POST, instance=queryset)
@@ -70,7 +77,8 @@ def update_items(request, pk):
             return redirect('/list_items')
 
     context = {
-        'form':form
+        'form':form,
+        'stock':stock_list
     }
     return render(request, 'add_items.html', context)
     
