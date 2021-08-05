@@ -20,6 +20,14 @@
   <!-- Favicon -->
 	<link rel="shortcut icon" href="{% static 'img/favicon.icon' %}" type="image/x-icon">
   <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+  <!-- Font Awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
 
   <style>
     .bd-placeholder-img {
@@ -56,7 +64,7 @@
 
 <body>
   <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
-    <a class="navbar-brand" href="/">STOCK V1.0.1</a>
+    <a class="navbar-brand" href="/">STOCK</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
       aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -73,6 +81,12 @@
         <li class="nav-item">
           <a class="nav-link" href="/add_items">Add Stock</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/route">Vehicle Route</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/add_items">Expenses</a>
+        </li>
         {% endif %}
       </ul>
       <ul class="navbar-nav">
@@ -86,13 +100,13 @@
   </nav>
   {% if request.user.is_staff == True %}
   <main role="main" class="container">
-    <div class="jumbotron">
-      <h1> {{title}}</h1>
+    <div class="jumbotron" style="margin-top:50px; text-align: center;">
+      <h1> Vehicle Distribution Form</h1>
       <div class="row">
         <div class="col-sm-5">
           <div class="display-table"
-            style="border-bottom-right-radius: 20px;padding-left: 5px; padding-right: 5px; padding-bottom: 20px; box-shadow: 12px 12px 15px #2e6da4;">
-            <form method="post" action="/route/">{% csrf_token %}
+            style="border-bottom-right-radius: 20px;padding-left: 5px; padding-right: 5px; padding-bottom: 20px; box-shadow: 12px 12px 15px #2e6da4; position: relative; left: 15vw;">
+            <form method="post" class="text-center border border-light p-5" action="/route/">{% csrf_token %}
               {{form|crispy}}
               <input type="submit" class="btn btn-primary mybutton" value="Save">
             </form>

@@ -248,6 +248,12 @@
         <li class="nav-item">
           <a class="nav-link" href="/add_items">Add Stock</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/route">Vehicle Route</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/add_items">Expenses</a>
+        </li>
         {% endif %}
       </ul>
       <ul class="navbar-nav">
@@ -322,6 +328,7 @@
             <th scope="col">Quantity</th>
             <th scope="col">Price</th>
             <th scope="col">Add to Cart</th>
+            <th scope="col">Update Item</th>
             <th scope="col">Delete</th>
           </tr>
         </thead>
@@ -333,6 +340,9 @@
             <td>{{ instance.price }}</td>
             <td>
               <button class="btn btn-sm btn-primary add-to-cart" data-id= '{{instance.item_name}}' data-price={{instance.price}} data-name= '{{instance.item_name}}' ><small><b>Add to cart </b></small></button>
+            </td>
+            <td>
+              <button class="btn btn-warning mt-1 mb-0" ><a href="{% url 'update_items' instance.item_name %}" style="color: white;"><small><b>Update</b></small></a></button>
             </td>
             <td>
             <button class="btn btn-danger mt-1 mb-0" ><a href="{% url 'delete_items' instance.item_name %}" style="color: white;"><small><b>Delete</b></small></a></button>
