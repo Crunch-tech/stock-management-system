@@ -84,7 +84,7 @@ def update_items(request, pk):
     
 @login_required	
 def delete_items(request, pk):
-    queryset = Stock.objects.get(id=pk)
+    queryset = Stock.objects.get(item_name=pk)
     if request.method == 'POST':
         queryset.delete()
         messages.success(request, 'Deleted Successfully')
@@ -260,7 +260,7 @@ def get_product_name(products_list):
     name = []
     for items in products_list:
         for id in items:
-            name.append(Stock.objects.filter(id=int(id)))
+            name.append(Stock.objects.filter(item_name= id))
     
     return name
 def get_product_count(products_list):
