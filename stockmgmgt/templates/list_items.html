@@ -204,6 +204,7 @@
       alertify.confirm("The Following item(s) will be issued out ." + names,
         function(){
           alertify.success('Success. Reload page to view changes ');
+          alert(total_price)
           $.ajax({
             type: 'GET',
             url: url,
@@ -211,7 +212,7 @@
               // quantity: item_count,
               // product_id: product_id,
               a:a, 
-              total: "24356",
+              total: total_price,
             },
             dataType: 'json',
             success: shoppingCart.clearCart(),

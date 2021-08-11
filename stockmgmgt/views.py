@@ -101,6 +101,7 @@ def stock_detail(request, pk):
 
 @login_required
 def issue_items(request):
+    import ipdb;ipdb.set_trace()
     data = request.GET.dict()
     Product_id = list(data.keys())
     pk_list = clean_keys_data(Product_id)
@@ -108,7 +109,6 @@ def issue_items(request):
         quantity_list = [values for values in data.values()]
     clean_list = []
     unwanted_list = []
-    
     total_transacted = quantity_list.pop()
     
     update_stock_on_issue(pk_list,quantity_list, request,total_transacted)
