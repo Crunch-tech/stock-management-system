@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import FormView
 from .models import Transaction
 from datetime import date
+from django.contrib.auth.models import User
+import json
 
 
 # Create your views here.
@@ -101,7 +103,6 @@ def stock_detail(request, pk):
 
 @login_required
 def issue_items(request):
-    import ipdb;ipdb.set_trace()
     data = request.GET.dict()
     Product_id = list(data.keys())
     pk_list = clean_keys_data(Product_id)
@@ -170,14 +171,17 @@ def report(request):
     item_count = [items["items_count"] for items in count_data]
     item_count = [items.split(", ") for items in item_count]
     count = get_product_count(item_count)
-    # data =Transaction.objects.values('item_name').annotate(Sum('transaction_amount'))
-    # categories = [items["item_name"] for items in data]
-    # user_count = User.objects.all().count()
-    # prices = [items["transaction_amount__sum"] for items in data]
-    # total_sales = sum(prices)
+    user_count = User.objects.all().count()
+    data =Transaction.objects.values('product_ids')
+    prices = Transaction.objects.values('transaction_amount')
+    prices_list = [items["transaction_amount"] for items in prices]
+    total_sales = sum(prices_list)
     # print(data, categories, prices)
-    # {'categories':json.dumps(categories), 'prices':json.dumps(prices), 'user_count':json.dumps(user_count),'total_sales':json.dumps(total_sales) }
-    return render(request, "report-1.html")
+    context = {
+        'total_sales': total_sales
+        }
+    print(context, prices_list)
+    return render(request, "report-1.html", context)
 
 @login_required
 def add_to_cart(request):
