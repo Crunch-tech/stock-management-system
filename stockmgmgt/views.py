@@ -4,13 +4,11 @@ from django.http import HttpResponse
 from django.contrib import messages
 import csv
 from .models import *
-from .forms import StockCreateForm, StockSearchForm, StockUpdateForm, IssueForm, RouteForm
+from .forms import StockCreateForm, StockSearchForm, StockUpdateForm, IssueForm, ExpenseForm
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import FormView
 from .models import Transaction
 from datetime import date
-from django.contrib.auth.models import User
-import json
 
 
 # Create your views here.
@@ -43,7 +41,7 @@ def list_items(request):
         "header": header,
         "queryset": queryset,
         }
-
+    import ipdb;ipdb.set_trace()
     return render(request, "list_items.html", context)
 
 @login_required
@@ -110,6 +108,7 @@ def issue_items(request):
         quantity_list = [values for values in data.values()]
     clean_list = []
     unwanted_list = []
+    
     total_transacted = quantity_list.pop()
     
     update_stock_on_issue(pk_list,quantity_list, request,total_transacted)
@@ -127,7 +126,7 @@ def issue_items(request):
 
 class RouteFormView(FormView):
     template_name = 'route.html'
-    form_class = RouteForm
+    form_class = ExpenseForm
     
     def post(self, request):
         form = self.form_class(request.POST)
@@ -171,17 +170,14 @@ def report(request):
     item_count = [items["items_count"] for items in count_data]
     item_count = [items.split(", ") for items in item_count]
     count = get_product_count(item_count)
-    user_count = User.objects.all().count()
-    data =Transaction.objects.values('product_ids')
-    prices = Transaction.objects.values('transaction_amount')
-    prices_list = [items["transaction_amount"] for items in prices]
-    total_sales = sum(prices_list)
+    # data =Transaction.objects.values('item_name').annotate(Sum('transaction_amount'))
+    # categories = [items["item_name"] for items in data]
+    # user_count = User.objects.all().count()
+    # prices = [items["transaction_amount__sum"] for items in data]
+    # total_sales = sum(prices)
     # print(data, categories, prices)
-    context = {
-        'total_sales': total_sales
-        }
-    print(context, prices_list)
-    return render(request, "report-1.html", context)
+    # {'categories':json.dumps(categories), 'prices':json.dumps(prices), 'user_count':json.dumps(user_count),'total_sales':json.dumps(total_sales) }
+    return render(request, "report-1.html")
 
 @login_required
 def add_to_cart(request):
