@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Stock(models.Model):
-    product_id = models.AutoField(null=False, primary_key=True)
+    id = models.AutoField(default='0', blank=True, null=False, primary_key=True)
     item_name = models.CharField(max_length=50, blank=True, null=False, primary_key=False)
     quantity = models.IntegerField(default='0', blank=True, null=True)
     price = models.IntegerField(default='0', blank=True, null=True)

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Route, Stock
+from .models import Expenses, Route, Stock
 
 class StockCreateForm(forms.ModelForm):
     class Meta:
@@ -38,4 +38,5 @@ class RouteForm(forms.ModelForm):
 
 class ExpenseForm(forms.ModelForm):
     class Meta:
-        models = ['Fuel', 'Lunch', 'Car_hire']
+        model = Expenses
+        fields = ['fuel', 'lunch', 'car_hire']

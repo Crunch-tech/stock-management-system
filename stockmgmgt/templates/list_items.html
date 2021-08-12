@@ -186,10 +186,10 @@
         names.push(product_name[i].innerHTML);
       };
       
-      var product_id = document.getElementsByClassName("product-id");
-      for(let i = 0; i < product_id.length; i++){
-        pk.push(product_id[i].innerHTML);
-      };
+      // var item_name = document.getElementsByClassName("product-id");
+      // for(let i = 0; i < item_name.length; i++){
+      //   pk.push(item_name[i].innerHTML);
+      // };
       
       var item_count = document.getElementsByClassName("item-count");
       for (i = 0 ; i < item_count.length; i++){
@@ -200,7 +200,7 @@
       var url = "http://127.0.0.1:8085/issue_items/";
       
       item_count = JSON.stringify(quantity)
-      product_id = JSON.stringify(pk)
+      item_name = JSON.stringify(pk)
       alertify.confirm("The Following item(s) will be issued out ." + names,
         function(){
           alertify.success('Success. Reload page to view changes ');
@@ -210,7 +210,7 @@
             url: url,
             data: {
               // quantity: item_count,
-              // product_id: product_id,
+              // item_name: item_name,
               a:a, 
               total: total_price,
             },
@@ -334,7 +334,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for instance in queryset%}
+          {% for instance in queryset %}
           <tr>
             <td><strong style="font-size: 25px;">{{ instance.item_name }} </strong></td>
             <td>{{ instance.quantity }}</td>
@@ -363,8 +363,8 @@
           event.preventDefault();
           var name = $(this).attr("data-name");
           var price = Number($(this).attr("data-price"));
-          var product_id = ($(this).attr("data-id"));
-          shoppingCart.addItemToCart(name, price, 1, product_id);
+          var item_name = ($(this).attr("data-id"));
+          shoppingCart.addItemToCart(name, price, 1, item_name);
           displayCart();
       });
 
@@ -379,7 +379,7 @@
           var output = "";
           for (var i in cartArray) {
             output += "<div>"
-                +"<p class='product-id'>"+cartArray[i].product_id+"</p>"
+                +"<p class='product-id'>"+cartArray[i].item_name+"</p>"
                 +"<p class='item-name font-weight-bold '> Item Name : "+cartArray[i].name+"</p>"
                 +" <input class='item-count' id='items-count' type='number' data-name='"
                 +cartArray[i].name
