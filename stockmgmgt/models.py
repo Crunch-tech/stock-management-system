@@ -76,3 +76,9 @@ class Order(models.Model):
 
 class OrderQuantity(models.Model):
     quantity = models.IntegerField(default='0', blank=True, null=True)
+
+class Expenses(models.Model):
+    fuel = models.IntegerField(default=0)
+    lunch = models.IntegerField(default=0)
+    car_hire = models.IntegerField(default=0)
+    total = models.IntegerField(default=0)
