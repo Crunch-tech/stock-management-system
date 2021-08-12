@@ -467,16 +467,19 @@ h3 {
 		  
 			  <div class="mainChart">
 				<canvas id="salesData"></canvas>
-				<h2>Total Sales</h2>
+				<h2>{{ context }}</h2>
 		  
 				<div class="clearFix"></div>
 		  
 				<div id="totalSales">
+          {{ context }}
 				  <div class="col">
-					<div id="creditSales" class="progressBar"></div>
-					<h3>$36,059</h3>
+          {% for items in context %}
+          <div id="creditSales" class="progressBar"></div>
+					<h3>{{ items }}</h3>
 					<span class="progressTitle">Sales</span>
 				  </div>
+          {% endfor %}
 				  <div class="col">
 					<div id="channelSales" class="progressBar"></div>
 					<h3>$24,834</h3>
