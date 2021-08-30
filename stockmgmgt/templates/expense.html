@@ -4,42 +4,12 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap Min CSS -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.mins.css' %}">
-    <!-- Animate Min CSS -->
-    <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
-    <!--  -->
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
-    <!--  -->
-    <link rel="stylesheet" href="{% static 'css/flaticon.html' %}">
-    <!-- IcoFont Min CSS -->
-    <link rel="stylesheet" href="{% static 'css/icofont.min.css' %}">
-    <!-- Owl Carousel Min CSS -->
-    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}">
-    <!-- default CSS -->
-    <link rel="stylesheet" href="{% static 'css/default.css' %}">
-    <!-- Style CSS -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <!-- Favicon -->
-    <!-- Font Awesome -->
-<link
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-rel="stylesheet"
-/>
-<!-- Google Fonts -->
-<link
-href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-rel="stylesheet"
-/>
-<!-- MDB -->
-<link
-href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css"
-rel="stylesheet"
-/>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v4.0.1">
+  <title>Home</title>
 
   <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/navbar-fixed/">
 
@@ -50,6 +20,14 @@ rel="stylesheet"
   <!-- Favicon -->
 	<link rel="shortcut icon" href="{% static 'img/favicon.icon' %}" type="image/x-icon">
   <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+  <!-- Font Awesome -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+<!-- Google Fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+<!-- Bootstrap core CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- Material Design Bootstrap -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet">
 
   <style>
     .bd-placeholder-img {
@@ -122,39 +100,13 @@ rel="stylesheet"
   </nav>
   {% if request.user.is_staff == True %}
   <main role="main" class="container">
-    <div class="col-md-3" style="text-align: left; background-color: white; position: absolute; left: 0px; top: 100px;">
+    <div class="jumbotron" style="margin-top:50px; text-align: center;">
+      <h1>Expenses Form</h1>
       <div class="row">
-        <div class="col-md-6">
-          <h1>Items In Stock</h1>
-          <table class="table-bordered">
-            <thead>
-              <tr>
-                <th scope="col">Item Name</th>
-                <th scope="col">Quantity</th>
-                <th scope="col">Price</th>
-              </tr>
-            </thead>
-            {% for items in stock %}
-            <tbody>
-                <tr>
-                  <td style="padding: 50px; padding-right: 50px; margin-left: 30px;">{{ items.item_name }}</td>
-                  <td style="padding: 50px; padding-right: 50px; margin-left: 30px;">{{ items.quantity }}</td>
-                  <td style="padding: 50px; padding-right: 50px; margin-left: 30px;">{{ items.price }}</td>
-                </tr>
-              </tbody>
-              {% endfor %}
-            </table>
-
-          </div>
-        </div>
-    </div>
-    <div class="jumbotron  col-md-7 " style="background-color:; position: fixed; right: 0px;">
-      <h1 class="text-left"> {{title}}</h1>
-      <div class="row">
-        <div class="col-md-5">
-          <div class="display-table" style="border-bottom-right-radius: 10px;padding-left: 5px; padding-right: 5px; padding-bottom: 20px; box-shadow: 12px 12px 15px #2e6da4;">
-            <form method="post" action="/add_items/" class="form col-md-12" >
-              {% csrf_token %}
+        <div class="col-sm-5">
+          <div class="display-table"
+            style="border-bottom-right-radius: 20px;padding-left: 5px; padding-right: 5px; padding-bottom: 20px; box-shadow: 12px 12px 15px #2e6da4; position: relative; left: 15vw;">
+            <form method="post" class="text-center border border-light p-5" action="/route/">{% csrf_token %}
               {{form|crispy}}
               <input type="submit" class="btn btn-primary mybutton" value="Save">
             </form>

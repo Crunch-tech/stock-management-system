@@ -1,3 +1,4 @@
+from stockmgmgt.forms import RouteForm
 from django.contrib import admin
 from django.urls import include, path
 from stockmgmgt import views
@@ -16,7 +17,8 @@ urlpatterns = [
     path('delete_items/<str:pk>/', views.delete_items, name="delete_items"),
     path('stock_detail/<str:pk>/', views.stock_detail, name="stock_detail"),
     path('issue_items/', views.issue_items, name="issue_items"),
-    path('route/', views.RouteFormView.as_view(), name="route"),
+    path('return/', views.return_stock, name="return"),
+    path('expenses/', views.RouteFormView.as_view(), name="expenses"),
     path('list_history/', views.list_history, name='list_history'),
     path('report/', views.report, name='report'),
     path('admin/', admin.site.urls),

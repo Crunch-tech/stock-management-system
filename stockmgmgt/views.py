@@ -1,4 +1,5 @@
 from django.contrib.messages.api import error
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
@@ -9,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import FormView
 from .models import Transaction
 from datetime import date
+from django.contrib.auth.models import User
+import json
 
 
 # Create your views here.
@@ -41,7 +44,6 @@ def list_items(request):
         "header": header,
         "queryset": queryset,
         }
-    import ipdb;ipdb.set_trace()
     return render(request, "list_items.html", context)
 
 @login_required
@@ -51,7 +53,7 @@ def add_items(request):
     if form.is_valid():
         form.save()
         messages.success(request, 'Successfully Saved')
-        return redirect('/list_items')
+        return redirect('/add_items')
     context = {
         "form": form,
         "title": "Add Item",
@@ -102,16 +104,17 @@ def stock_detail(request, pk):
 @login_required
 def issue_items(request):
     data = request.GET.dict()
-    Product_id = list(data.keys())
+    Product_id = data.keys()
     pk_list = clean_keys_data(Product_id)
+    print(pk_list)
+    quantity_list = []
     for keys, values in data.items():
-        quantity_list = [values for values in data.values()]
+        quantity_list.append(values)
+        # import ipdb;ipdb.set_trace()
     clean_list = []
     unwanted_list = []
-    
-    total_transacted = quantity_list.pop()
-    
-    update_stock_on_issue(pk_list,quantity_list, request,total_transacted)
+    print(quantity_list)
+    update_stock_on_issue(pk_list,quantity_list, request,145000)
     
     return redirect("/list_items/")
     context = {
@@ -125,29 +128,42 @@ def issue_items(request):
 
 
 class RouteFormView(FormView):
-    template_name = 'route.html'
+    template_name = 'expense.html'
     form_class = ExpenseForm
+    success_url = '/route/'
     
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
             form.save()
-            pk_list = []
-            unwanted_data = ["vehicle_number", "lap_number"]
-            for items in unwanted_data:
-                del form.cleaned_data[items]
-            pk_list = []
-            quantity_list = []
-            for key, value in form.cleaned_data.items():
-                pk_list.append(key)
-                quantity_list.append(value)
-            update_stock_on_issue(pk_list, quantity_list, request, 0)
-            context = {"Message":"Route form saved"}
-            return render(request,"route.html", context)
+            context = {
+                "Message":"Expense form saved",
+                "form": form
+                }
+            return render(request,"expense.html", context)
         form = self.form_class()
         context = { "form": form }
-        return render(request, "route.html", context)
-    
+        return render(request, "expense.html", context)
+
+
+@login_required
+def return_stock(request):
+    stock = Stock.objects.all().values()
+    form = StockUpdateForm()
+    if request.method == 'POST':
+        import ipdb;ipdb.set_trace()
+        queryset = Stock.objects.get(item_name=pk)
+        form = StockUpdateForm(request.POST, instance=queryset)
+        if form.is_valid():
+            form.save(), messages.success(request, 'Successfully Updated')
+            return redirect('/list_items')
+
+    context = {
+        'form':form,
+        'stock':stock
+    }
+    return render(request, 'return.html', context)
+
 @login_required
 def list_history(request):
     header = 'LIST OF ITEMS'
@@ -169,15 +185,18 @@ def report(request):
     count_data = Transaction.objects.values("items_count")
     item_count = [items["items_count"] for items in count_data]
     item_count = [items.split(", ") for items in item_count]
+    if item_count == [ ]:
+        count = 0
     count = get_product_count(item_count)
-    # data =Transaction.objects.values('item_name').annotate(Sum('transaction_amount'))
-    # categories = [items["item_name"] for items in data]
-    # user_count = User.objects.all().count()
-    # prices = [items["transaction_amount__sum"] for items in data]
-    # total_sales = sum(prices)
-    # print(data, categories, prices)
-    # {'categories':json.dumps(categories), 'prices':json.dumps(prices), 'user_count':json.dumps(user_count),'total_sales':json.dumps(total_sales) }
-    return render(request, "report-1.html")
+    data =Transaction.objects.values()
+    categories = [items["product_ids"] for items in data]
+    user_count = User.objects.all().count()
+    prices = [items["transaction_amount"] for items in data]
+    total_sales = sum(prices)
+    context = {'prices':json.dumps(prices), 'user_count':json.dumps(user_count),'total_sales':json.dumps(total_sales) }
+    print(context)
+    # import ipdb; ipdb.set_trace()
+    return render(request, "report-1.html", {'context':context})
 
 @login_required
 def add_to_cart(request):
@@ -239,11 +258,10 @@ def delete_from_cart(request, id):
     messages.info(request, f"item added to cart ")
     return render(request, "list_items.html", { 'order_list':order_list, 'queryset':queryset, 'pk_list':pk_list })
 
-def clean_keys_data(list):
+def clean_keys_data(lists):
     new_list = []
     "removing 'a[' from items in the keys list "
-
-    for items in list:
+    for items in lists:
         data = items.replace("a[", "")
         new_list.append(data)
     
@@ -252,7 +270,8 @@ def clean_keys_data(list):
     for items in new_list:
         data = items.replace("]", "")
         clean_list.append(data)
-    clean_list.pop()
+    # import ipdb;ipdb.set_trace()
+    # clean_list.pop()
     return clean_list 
 
 def get_product_name(products_list):
@@ -264,36 +283,34 @@ def get_product_name(products_list):
     
     return name
 def get_product_count(products_list):
+
     # generate product count list
     counts = []
     for items in products_list:
         for count in items:
             counts.append(count)
-    return count
+    return counts
 
 def update_stock_on_issue(pk_list, quantity_list, request, total_transacted):
     for (index, pk) in enumerate(pk_list):
         if quantity_list[index] == 0:
             print("item not updated")
         else:
-            queryset = Stock.objects.get(item_name=pk.replace("_", " "))
-            instance = queryset    
-            instance.issue_quantity = quantity_list[pk_list.index(pk)]
-            instance.quantity -= int(instance.issue_quantity)
-            instance.issue_by = str(request.user)
+            issue_quantity = quantity_list[pk_list.index(pk)]
+            quantity = Stock.objects.get(item_name=pk.replace("_", " ")).quantity
+            quantity -= int(issue_quantity)
+
+            QuerySet = Stock.objects.filter(item_name=pk.replace("_", " ")).update(quantity=quantity)
             messages.success(
                 request,
                 "Issued SUCCESSFULLY. "
-                + str(instance.quantity)
+                + str(quantity)
                 + " "
-                + str(instance.item_name)
+                + str(pk)
                 + "s now left in Store",
             )
             print("item updated")
-            instance.save()
-    if total_transacted == 0:
-        pass
-    else:
+        print("we are here")
         sell_transaction = Transaction(
             employee_name= request.user.username,
             transaction_amount= total_transacted,

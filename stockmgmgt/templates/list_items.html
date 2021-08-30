@@ -186,15 +186,17 @@
         names.push(product_name[i].innerHTML);
       };
       
-      // var item_name = document.getElementsByClassName("product-id");
-      // for(let i = 0; i < item_name.length; i++){
-      //   pk.push(item_name[i].innerHTML);
-      // };
+      var item_name = document.getElementsByClassName("item-name");
+      for(let i = 0; i < item_name.length; i++){
+        pk.push(product_name[i].innerHTML);
+        console.log(pk)
+      };
       
       var item_count = document.getElementsByClassName("item-count");
       for (i = 0 ; i < item_count.length; i++){
         quantity.push(item_count[i].value);
       };
+      console.log
       var total_price = document.getElementById("total-cart");
       let a = Object.assign({}, ...pk.map((n, index) => ({[n]: quantity[index]})));
       var url = "http://127.0.0.1:8085/issue_items/";
@@ -203,8 +205,7 @@
       item_name = JSON.stringify(pk)
       alertify.confirm("The Following item(s) will be issued out ." + names,
         function(){
-          alertify.success('Success. Reload page to view changes ');
-          alert(total_price)
+          console.log(a)
           $.ajax({
             type: 'GET',
             url: url,
@@ -212,12 +213,13 @@
               // quantity: item_count,
               // item_name: item_name,
               a:a, 
-              total: total_price,
+              // total: total_price,
             },
             dataType: 'json',
             success: shoppingCart.clearCart(),
             
-           }).done(function (){
+          }).done(function (){
+             alertify.success('Success. Reload page to view changes ');
              location.reload(true);
            });
         },
@@ -250,10 +252,10 @@
           <a class="nav-link" href="/add_items">Add Stock</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/route">Expenses</a>
+          <a class="nav-link" href="/expenses">Expenses</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/add_items">Return Stock</a>
+          <a class="nav-link" href="/return">Return Stock</a>
         </li>
         {% endif %}
       </ul>
@@ -304,7 +306,7 @@
           <strong><i><b>Items Search</b></i></strong>
         </h1>
         <hr>
-        <form class="mt-3" method="POST" action="{% url 'route'%}">{% csrf_token %}
+        <form class="mt-3" method="POST" action="{% url 'return'%}">{% csrf_token %}
           {{form|crispy}}
           <input class=" btn btn-primary mybutton" type="submit" value="Search">
         </form>
@@ -379,8 +381,8 @@
           var output = "";
           for (var i in cartArray) {
             output += "<div>"
-                +"<p class='product-id'>"+cartArray[i].item_name+"</p>"
-                +"<p class='item-name font-weight-bold '> Item Name : "+cartArray[i].name+"</p>"
+                // +"<p class='product-id'>"+cartArray[i].item_name+"</p>"
+                +"<p class='item-name font-weight-bold '>"+cartArray[i].name+"</p>"
                 +" <input class='item-count' id='items-count' type='number' data-name='"
                 +cartArray[i].name
                 +"' value='"+cartArray[i].count+"' >"
